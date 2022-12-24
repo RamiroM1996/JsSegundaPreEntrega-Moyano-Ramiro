@@ -1,0 +1,60 @@
+.imagen{
+    max-width:100%;
+}
+
+a{
+    cursor:pointer;
+}
+.alerta{
+    font-weight:700;
+}
+body{
+    /* background-color: #E3D8D6; */
+    background-image: url(biblio.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow-x: hidden;
+}
+.modal-contenedor{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    gap:2rem;
+}
+.img-carrito{
+    width:200px;
+    padding:20px;
+} 
+
+.card-img, .card-img-top:hover {
+    transform: scale(1.1);
+    transition: 1s;
+}
+
+.btn-primary:hover {
+    transform: translateX(5px);
+    transition: 1s;
+    background: #198754;
+}
+
+.img-carrito:hover {
+    transform: scale(1.1);
+    transition: 1s;
+}
+.modal-content{
+    background-color: #E3D8D6;
+}
+.parrafo{
+    font-weight: 900;
+    font-style: italic;
+}
+#precioTotal{
+    margin:0;
+    padding:0;
+}
+a{
+    text-decoration: none;
+}
+.boton{
+    opacity:0;
+}
