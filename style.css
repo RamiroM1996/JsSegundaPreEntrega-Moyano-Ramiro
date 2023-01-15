@@ -58,3 +58,13 @@ a{
 .boton{
     opacity:0;
 }
+ 
+
+.compra {
+    background-color: white;
+}  
+
+#activarFuncion {
+    visibility: hidden;
+}
+

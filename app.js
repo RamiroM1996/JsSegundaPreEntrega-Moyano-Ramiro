@@ -114,6 +114,27 @@ const contenedor = document.querySelector('#contenedor');
 const carritoContenedor = document.querySelector('#carritoContenedor'); 
 const vaciarCarrito = document.querySelector('#vaciarCarrito');
 const precioTotal = document.querySelector('#precioTotal');
+const procesarCompra = document.querySelector('#procesarCompra'); 
+const activarFuncion = document.querySelector('#activarFuncion');
+const totalProceso = document.querySelector('#totalProceso');
+const formulario = document.querySelector('#procesar-pago');
+
+if(activarFuncion) {
+  activarFuncion.addEventListener('click' , porcesarPedido)
+}
+
+if(formulario){
+  formulario.addEventListener('submit', enviarPedido)
+}
+document.addEventListener('DOMContentLoaded' , () => {
+  carrito = JSON.parse(localStorage.getItem('carrito')) || []
+  mostrarCarrito()
+  
+  if(activarFuncion){
+  document.querySelector('#activarFuncion').click(porcesarPedido)
+  }
+
+})
 
 
 stockProductos.forEach((prod) => {
@@ -124,7 +145,7 @@ stockProductos.forEach((prod) => {
     <img class="card-img-top mt-2" src="${img}" alt="Card image cap">
     <div class="card-body">
       <h5 class="card-title">${nombre}</h5>
-      <p class="card-text">Precio: ${precio}</p>
+      <p class="card-text">Precio: $ ${precio}</p>
       <p class="card-text">Descripcion: ${desc}</p>
       <p class="card-text">Autor: ${autor}</p>
       <p class="card-text">Cantidad: ${cantidad}</p>
@@ -133,15 +154,41 @@ stockProductos.forEach((prod) => {
   </div>
     `;
   }
-}); 
+});  
 
+
+if (procesarCompra) {
+procesarCompra.addEventListener('click' , () => {
+    if (carrito.length === 0) {
+      Swal.fire({
+        title: "El Carrito está vacio!",
+        text: "Agregá algo para continuar con la compra!",
+        icon: "error", 
+        confirmButtonText: "Aceptar",
+      }) 
+    } else {
+      location.href = "compra.html"
+      porcesarPedido()
+    }     
+    
+}) 
+}
+
+if(vaciarCarrito) {
+vaciarCarrito.addEventListener('click' , () =>  {
+
+  carrito.length = []
+  mostrarCarrito();
+
+})
+}
 
 
 function agregarProducto(id) {
 
-   const existe  = carrito.some(prod => prod.id === id)
+  const existe  = carrito.some(prod => prod.id === id)
   
-   if (existe) {
+  if (existe) {
     const prod = carrito.map(prod => {
       if(prod.id === id) {
         prod.cantidad++
@@ -158,10 +205,10 @@ function agregarProducto(id) {
 
 const mostrarCarrito = () => {
     const modalBody  = document.querySelector('.modal .modal-body')
-    
 
+    if(modalBody){
 
-    modalBody.innerHTML = ''     //limpio html 
+    modalBody.innerHTML = ''     
     carrito.forEach((prod) => {
       const {id, nombre, img, cantidad, precio} = prod 
       modalBody.innerHTML += `
@@ -177,7 +224,9 @@ const mostrarCarrito = () => {
 
       <button onclick="eliminarProducto(${id})" class="btn btn-danger">Eliminar Producto</button> 
       <div>`
-    })
+    }) 
+  }
+    
 
     //mensaje de que no se agregó nada al carrito 
 
@@ -190,11 +239,74 @@ const mostrarCarrito = () => {
     carritoContenedor.textContent = carrito.length;
 
     //calculo del costo total. 
+    if(precioTotal){ 
     precioTotal.textContent = carrito.reduce((acc, prod) => acc + prod.cantidad * prod.precio, 0); 
+    }
+
+    guardarStorage();
 } 
 
 function eliminarProducto(id) {
     const libroId = id 
     carrito = carrito.filter((libro) => libro.id !== libroId)
     mostrarCarrito();
+} 
+
+function guardarStorage() {
+  localStorage.setItem("carrito" ,JSON.stringify(carrito))
+} 
+
+function porcesarPedido() {
+    carrito.forEach((prod) => {
+      const listaCompra = document.querySelector('#lista-compra tbody')
+      const {id, nombre, autor, precio, cantidad, img} = prod
+
+      const row = document.createElement('tr')
+      row.innerHTML += `
+        <td>
+          <img class="img-fluid img-carrito" src="${img}" /> 
+        </td>
+        <td>${nombre}</td>
+        <td>${precio}</td>
+        <td>${cantidad}</td>
+        <td>${precio * cantidad}</td>
+
+      `
+      listaCompra.appendChild(row)
+    })
+    totalProceso.innerText = carrito.reduce((acc, prod) => acc + prod.cantidad * prod.precio, 0);
+} 
+
+function enviarPedido(e) {
+  e.preventDefault() 
+  const cliente  = document.querySelector('#cliente').value
+  const correo  = document.querySelector('#correo').value
+  
+  if(correo === '' || cliente === '') {
+    Swal.fire({
+      title: "Los campos Email y Nombre deben ser completados!",
+      text: "Completá el formulario.",
+      icon: "error", 
+      confirmButtonText: "Aceptar",
+    })
+  } else {
+    const spinner = document.querySelector('#spinner')
+    spinner.classList.add('d-flex')
+    spinner.classList.remove('d-none')
+
+    setTimeout(() => {
+      spinner.classList.remove('d-flex')
+      spinner.classList.add('d-none')
+      formulario.reset()
+    }, 3500) 
+
+    const compraSuccess = document.createElement('p')
+    compraSuccess.classList.add('alert', 'alerta', 'd-block', 'text-center', 'col-md-12', 'mt-2', 'alert-success')
+    compraSuccess.textContent = "Compra realizada existosamente"
+    formulario.appendChild(compraSuccess)
+
+    setTimeout(() => {
+      compraSuccess.remove()
+    }, 3500) 
+  }
 }
