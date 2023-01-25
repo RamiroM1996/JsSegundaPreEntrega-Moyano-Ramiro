@@ -126,6 +126,7 @@ if(activarFuncion) {
 if(formulario){
   formulario.addEventListener('submit', enviarPedido)
 }
+
 document.addEventListener('DOMContentLoaded' , () => {
   carrito = JSON.parse(localStorage.getItem('carrito')) || []
   mostrarCarrito()
@@ -279,10 +280,10 @@ function porcesarPedido() {
 
 function enviarPedido(e) {
   e.preventDefault() 
-  const cliente  = document.querySelector('#cliente').value
+  const name  = document.querySelector('#name').value
   const correo  = document.querySelector('#correo').value
   
-  if(correo === '' || cliente === '') {
+  if(correo === '' || name === '') {
     Swal.fire({
       title: "Los campos Email y Nombre deben ser completados!",
       text: "Completá el formulario.",
@@ -290,6 +291,28 @@ function enviarPedido(e) {
       confirmButtonText: "Aceptar",
     })
   } else {
+
+    const btn = document.getElementById('button');
+
+    // document.getElementById('form')
+    // .addEventListener('submit', function(event) {
+    // event.preventDefault();
+
+    btn.value = 'Sending...';
+
+    const serviceID = 'default_service';
+    const templateID = 'template_dl15u1c';
+
+    emailjs.sendForm(serviceID, templateID, this)
+      .then(() => {
+        btn.value = 'Send Email';
+        alert('Enviado!');
+      }, (err) => {
+        btn.value = 'Send Email';
+        alert(JSON.stringify(err));
+      });
+  };
+
     const spinner = document.querySelector('#spinner')
     spinner.classList.add('d-flex')
     spinner.classList.remove('d-none')
@@ -309,4 +332,3 @@ function enviarPedido(e) {
       compraSuccess.remove()
     }, 3500) 
   }
-}
