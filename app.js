@@ -306,7 +306,13 @@ function enviarPedido(e) {
     emailjs.sendForm(serviceID, templateID, this)
       .then(() => {
         btn.value = 'Send Email';
-        alert('Enviado!');
+        // alert('Enviado!'); 
+        Swal.fire({
+          title: "Compra realizada con exito",
+          text: "Muchas gracias por realizar la compra",
+          icon: "success", 
+          confirmButtonText: "Aceptar",
+        })
       }, (err) => {
         btn.value = 'Send Email';
         alert(JSON.stringify(err));
